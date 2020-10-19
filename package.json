@@ -1,0 +1,23 @@
+{
+  "name": "devagram-backend",
+  "version": "1.0.0",
+  "description": "Backend code of Devagram",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dkp1903/devagram-backend.git"
+  },
+  "author": "Aakash Thakkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dkp1903/devagram-backend/issues"
+  },
+  "homepage": "https://github.com/dkp1903/devagram-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9"
+  }
+}

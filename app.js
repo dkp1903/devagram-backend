@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 9999;
 
+require('./models/schema')
+
 mongoose.connect(process.env.MONGOURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

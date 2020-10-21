@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 9999;
 
-require('./models/schema')
+require('./models/user_schema')
+require('./models/post_schema')
 
 mongoose.connect(process.env.MONGOURI, {
   useNewUrlParser: true,

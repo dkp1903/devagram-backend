@@ -21,12 +21,22 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    followers:{
+    no_of_followers:{
         type: BigInt,
         required: true
     },
-    following:{
+    no_of_following:{
         type: BigInt,
+        required: true
+    },
+    followers:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: true
+    },
+    following:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
         required: true
     },
     devrole:{

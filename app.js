@@ -4,10 +4,8 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 9999;
 
-require('./models/user_schema')
-require('./models/post_schema')
 
-mongoose.connect(process.env.MONGOURI, {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -18,6 +16,9 @@ mongoose.connection.on("connected", () => {
 mongoose.connection.on("error", (error) => {
   console.log("OOPS !! Problem in connecting Mongoose atlas !!", error);
 });
+
+app.use(express.json());
+app.use(require('./router/auth')) //API's are: 1. localhost:9999/signup (POST){username,email,password}  2. localhost:9999/signin (POST){email,password}
 
 app.listen(port, () => {
   console.log(`App is running on port : ${port} !!`);

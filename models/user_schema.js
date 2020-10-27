@@ -1,70 +1,54 @@
 const mongoose = require('mongoose')
 
-// const UserSchema = new mongoose.Schema({
-//     name:{
-//         type: String,
-//         required: true
-//     },
-//     username:{
-//         type: String,
-//         required: true
-//     },
-//     password:{
-//         type: String,
-//         required: true
-//     },
-//     email:{
-//         type: String,
-//         required: true
-//     },
-//     profile_picture:{
-//         type: String,
-//         required: true
-//     },
-//     no_of_followers:{
-//         type: BigInt,
-//         required: true
-//     },
-//     no_of_following:{
-//         type: BigInt,
-//         required: true
-//     },
-//     followers:{
-//         type: [mongoose.Schema.Types.ObjectId],
-//         ref: 'User',
-//         required: true
-//     },
-//     following:{
-//         type: [mongoose.Schema.Types.ObjectId],
-//         ref: 'User',
-//         required: true
-//     },
-//     devrole:{
-//         type: String,
-//         required: true
-//     },
-//     no_of_posts:{
-//         type: BigInt,
-//         required: true
-//     },
-//     description:{
-//         type:String,
-//         required:true
-//     }
-// })
-const userSchema=new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
+    name:{
+        type: String,
+        required: true
+    },
     username:{
-        type:String,
-        required:true
+        type: String,
+        required: true
+    },
+    password:{
+        type: String,
+        required: true
     },
     email:{
         type:String,
         required:true
     },
-    password:{
+    description:{
         type:String,
         required:true
+    },
+    profile_picture:{
+        type: String,
+        default: "NULL"
+    },
+    no_of_followers:{
+        type: Number,
+        default: 0
+    },
+    no_of_following:{
+        type: Number,
+        default: 0
+    },
+    devrole:{
+        type: String,
+        required: true
+    },
+    no_of_posts:{
+        type: Number,
+        default: 0
+    },
+    followers:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User'
+    },
+    following:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User'
     }
 })
 
-module.exports=mongoose.model("User",userSchema)
+mongoose.model("User",UserSchema)

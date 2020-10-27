@@ -48,6 +48,10 @@ const UserSchema = new mongoose.Schema({
     following:{
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User'
+    },
+    user_posts:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Post'
     }
 })
 

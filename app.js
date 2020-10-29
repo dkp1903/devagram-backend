@@ -1,25 +1,28 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
+
 const app = express();
-const port = 9999;
+const port = process.env.PORT || 9999;
+const connectToDatabase = require("./config/dbConfig");
+const cors = require("cors");
 
+connectToDatabase();
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+app.use(cors());
+app.use(
+  express.json({
+    extended: false,
+  })
+);
+
+app.get("/api", (req, res) => {
+  res.send("API running");
 });
-mongoose.connection.on("connected", () => {
-  console.log("Mongoose Atlas connected !!!");
-});
 
-mongoose.connection.on("error", (error) => {
-  console.log("OOPS !! Problem in connecting Mongoose atlas !!", error);
-});
-
-app.use(express.json());
-app.use(require('./router/auth')) //API's are: 1. localhost:9999/signup (POST){username,email,password}  2. localhost:9999/signin (POST){email,password}
+//routes
+app.use("/api/auth", require("./router/auth"));
+app.use("/api/profile", require("./router/profile"));
 
 app.listen(port, () => {
-  console.log(`App is running on port : ${port} !!`);
+  console.log(`App is running on port : ${port}`);
 });

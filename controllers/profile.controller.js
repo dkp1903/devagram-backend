@@ -45,7 +45,21 @@ const editUser = async (req, res) => {
   }
 };
 
+const deleteProfile = async (req, res) => {
+  const user = req.user;
+  try {
+    await User.findByIdAndDelete(user.id);
+
+    res.status(200).json({
+      message: "User Deleted",
+    });
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
 module.exports = {
   getProfile,
   editUser,
+  deleteProfile,
 };

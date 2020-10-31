@@ -1,5 +1,6 @@
 const User = require("../models/user_schema");
 const showError = require("../config/showError");
+const bcrypt = require("bcryptjs");
 
 const getProfile = async (req, res) => {
   return res.status(200).json({
@@ -8,12 +9,27 @@ const getProfile = async (req, res) => {
 };
 
 const editUser = async (req, res) => {
-  const { name, username, email, description, devrole } = req.body;
+  /**
+   * update use but check new email and username must be unique
+   * Password is required to update user
+   * You cannot set newPassword same as current password
+   */
+  const {
+    name,
+    username,
+    email,
+    description,
+    devrole,
+    password,
+    newPassword,
+  } = req.body;
   const user = req.user;
   try {
-    //update use but check new email and username must be unique
     const userExist = await User.findOne({ $or: [{ email }, { username }] });
     if (userExist) {
+      /**
+       * checks if user with new username or new email already exist or not
+       */
       if (
         !(
           (user.username === username && user.email === email) ||
@@ -30,11 +46,34 @@ const editUser = async (req, res) => {
         });
       }
     }
+
+    /**
+     * updates user according to data provided
+     */
     if (name) user.name = name;
     if (username) user.username = username;
     if (email) user.email = email;
     if (description) user.description = description;
     if (devrole) user.devrole = devrole;
+    if (newPassword) {
+      /**
+       * Change password logic
+       */
+      if (password === newPassword) {
+        return res.status(400).json({
+          error: "password and newPassword cannot be same",
+        });
+      }
+      if (newPassword.length < 8 || newPassword.length > 32) {
+        return res.status(400).json({
+          error: "newPassword length must be between 8-32",
+        });
+      }
+      user.password = newPassword;
+      const sault = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, sault);
+    }
+
     await user.save();
 
     return res.status(200).json({
@@ -45,7 +84,24 @@ const editUser = async (req, res) => {
   }
 };
 
+/**
+ * Password is required to delete the user
+ */
+const deleteProfile = async (req, res) => {
+  const user = req.user;
+  try {
+    await User.findByIdAndDelete(user.id);
+
+    res.status(200).json({
+      message: "User Deleted",
+    });
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
 module.exports = {
   getProfile,
   editUser,
+  deleteProfile,
 };

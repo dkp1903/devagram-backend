@@ -39,8 +39,8 @@ const editUser = async (req, res) => {
       ) {
         return res.status(400).json({
           error:
-            userExist.email.toLowerCase() === email?.toLowerCase() &&
-            email?.toLowerCase() !== user.email.toLowerCase()
+            userExist.email.toLowerCase() === email.toLowerCase() &&
+            email.toLowerCase() !== user.email.toLowerCase()
               ? "User with this email already exists"
               : "User with this username already exists",
         });

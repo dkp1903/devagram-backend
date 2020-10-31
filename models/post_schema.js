@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema({
     required: true,
   },
   no_of_likes: {
-    type: BigInt,
+    type: Number,
     required: true,
     default: 0,
   },
@@ -49,4 +49,4 @@ const PostSchema = new mongoose.Schema({
   },
 });
 
-mongoose.model("Post", PostSchema);
+module.exports = mongoose.model("Post", PostSchema);

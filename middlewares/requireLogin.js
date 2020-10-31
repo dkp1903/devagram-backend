@@ -4,6 +4,7 @@
 const User = require("../models/user_schema");
 const jwt = require("jsonwebtoken");
 const JWT_TOKEN = process.env.JWT_SECRET;
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
@@ -26,13 +27,16 @@ module.exports = (req, res, next) => {
     User.findById(id)
       .select("-password")
       .then((userData) => {
-        if (!user) {
-          return;
+        if (!userData) {
+          return res.status(400).json({
+            error: "You need to be logged-in",
+          });
         }
         req.user = userData;
         next();
       })
       .catch((error) => {
+        console.log(error.message);
         return res.status(404).json({
           error: "You need to be logged in",
         });

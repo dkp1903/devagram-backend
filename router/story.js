@@ -3,7 +3,11 @@ const router = Router();
 const { check } = require("express-validator");
 
 //controllers
-const { uploadStory, getStory } = require("../controllers/story.controller");
+const {
+  uploadStory,
+  getStory,
+  deleteStory,
+} = require("../controllers/story.controller");
 
 //middlewares
 const requireLogin = require("../middlewares/requireLogin");
@@ -11,20 +15,27 @@ const requireLogin = require("../middlewares/requireLogin");
 /**
  * route : POST /api/story
  * access : Private
- * desc: Register user
+ * desc: create user
  */
 router.post(
   "/",
   requireLogin,
-  [check("imageUrl", "imageUrl is required").exists()],
+  [check("imageUrl", "imageUrl is required").isURL()],
   uploadStory
 );
 
 /**
- * route : POST /api/story
+ * route : GET /api/story/:id
  * access : Private
- * desc: Register user
+ * desc: get story
  */
-router.get("/", requireLogin, getStory);
+router.get("/:id", requireLogin, getStory);
+
+/**
+ * route : DELETE /api/story/:id
+ * access : Private
+ * desc: Delete story
+ */
+router.delete("/:id", requireLogin, deleteStory);
 
 module.exports = router;

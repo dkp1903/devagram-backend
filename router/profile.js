@@ -11,11 +11,39 @@ const {
 
 //middleware
 const requireLogin = require("../middlewares/requireLogin");
+const checkPassword = require("../middlewares/checkPassword");
 
+/**
+ * route : GET /api/profile
+ * access : Private
+ * desc: get user profile
+ */
 router.get("/", requireLogin, getProfile);
 
-router.put("/", requireLogin, editUser);
+/**
+ * route : PUT /api/profile
+ * access : private
+ * desc: Update user
+ */
+router.put(
+  "/",
+  requireLogin,
+  [check("password", "password is required").exists()],
+  checkPassword,
+  editUser
+);
 
-router.delete("/", requireLogin, deleteProfile);
+/**
+ * route : DELETE /api/profile
+ * access : Private
+ * desc: Delete user
+ */
+router.delete(
+  "/",
+  requireLogin,
+  [check("password", "password is required to delete account").exists()],
+  checkPassword,
+  deleteProfile
+);
 
 module.exports = router;

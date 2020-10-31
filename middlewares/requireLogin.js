@@ -1,7 +1,6 @@
 /*
  *this is the middleware for authorization and preventing from routing without the registration
  */
-const mongoose = require("mongoose");
 const User = require("../models/user_schema");
 const jwt = require("jsonwebtoken");
 const JWT_TOKEN = process.env.JWT_SECRET;
@@ -23,9 +22,13 @@ module.exports = (req, res, next) => {
     const {
       user: { id },
     } = payload;
+
     User.findById(id)
       .select("-password")
       .then((userData) => {
+        if (!user) {
+          return;
+        }
         req.user = userData;
         next();
       })

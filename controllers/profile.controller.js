@@ -1,4 +1,7 @@
 const User = require("../models/user_schema");
+const Post = require("../models/post_schema");
+const Story = require("../models/story_schema");
+
 const showError = require("../config/showError");
 const bcrypt = require("bcryptjs");
 
@@ -90,7 +93,15 @@ const editUser = async (req, res) => {
 const deleteProfile = async (req, res) => {
   const user = req.user;
   try {
-    await User.findByIdAndDelete(user.id);
+    const user = await User.findByIdAndDelete(user.id);
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    } else {
+      await Post.findOneAndDelete({ user: user.id });
+      await Story.findOneAndDelete({ user: user.id });
+    }
 
     res.status(200).json({
       message: "User Deleted",

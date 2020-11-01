@@ -81,12 +81,6 @@ const getAllStory = async (req, res) => {
 const getOtherUserStory = async (req, res) => {
   const { userId, storyId } = req.params;
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        error: "user not found",
-      });
-    }
     const story = await Story.findOne({ user: userId, _id: storyId });
     if (!story) {
       return res.status(404).json({
@@ -102,10 +96,24 @@ const getOtherUserStory = async (req, res) => {
   }
 };
 
+const getAllStoryOfUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const stories = await Story.find({ user: userId });
+
+    return res.status(200).json({
+      stories,
+    });
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
 module.exports = {
   uploadStory,
   getStory,
   deleteStory,
   getAllStory,
   getOtherUserStory,
+  getAllStoryOfUser,
 };

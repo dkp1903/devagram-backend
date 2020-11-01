@@ -20,10 +20,9 @@ const schema = new mongoose.Schema({
   createdDate: {
     type: Date,
     default: Date.now(),
-  },
-  expirationDate: {
-    type: Date,
-    default: Date.now() + 24 * 60 * 60 * 1000,
+    index: {
+      expires: "24h",
+    },
   },
 });
 

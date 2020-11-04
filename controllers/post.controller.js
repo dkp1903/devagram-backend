@@ -2,7 +2,6 @@ const Post = require("../models/post_schema");
 
 const { validationResult } = require("express-validator");
 const showError = require("../config/showError");
-const e = require("express");
 
 const addPost = async (req, res) => {
   const errors = validationResult(req);

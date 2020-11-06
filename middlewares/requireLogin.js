@@ -1,24 +1,45 @@
-require('dotenv').config();
-const mongoose=require('mongoose')
-const User=require('../models/user_schema')
-const jwt=require('jsonwebtoken')
-const JWT_TOKEN=process.env.JWT_SECRET;
-module.exports=(req,res,next)=>{
-    const {authorization}=req.headers;
-    if(!authorization){
-        return res.status(401).json({error:'You must be logged in'})
+/*
+ *this is the middleware for authorization and preventing from routing without the registration
+ */
+const User = require("../models/user_schema");
+const jwt = require("jsonwebtoken");
+const JWT_TOKEN = process.env.JWT_SECRET;
+
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(401).json({
+      error: "You must be logged in",
+    });
+  }
+  const token = authorization.replace("Bearer ", "");
+  jwt.verify(token, JWT_TOKEN, (err, payload) => {
+    if (err) {
+      return res.status(401).json({
+        error: "You must be logged in",
+      });
     }
-    const token =authorization.replace("Bearer ","");
-    jwt.verify(token,JWT_TOKEN,(err,payload)=>{
-        if(err){
-            return res.status(401).json({error:"You must be logged in"});
+
+    const {
+      user: { id },
+    } = payload;
+
+    User.findById(id)
+      .select("-password")
+      .then((userData) => {
+        if (!userData) {
+          return res.status(400).json({
+            error: "You need to be logged-in",
+          });
         }
-
-        const {_id}=payload
-        User.findById(_id).then(userData=>{
-            req.user=userData;
-            next();
-        })
-    })
-
-}
+        req.user = userData;
+        next();
+      })
+      .catch((error) => {
+        console.log(error.message);
+        return res.status(404).json({
+          error: "You need to be logged in",
+        });
+      });
+  });
+};

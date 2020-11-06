@@ -1,25 +1,43 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
+
 const app = express();
-const port = 9999;
+const port = process.env.PORT || 9999;
+const connectToDatabase = require("./config/dbConfig");
 
+const cors = require("cors");
+const morgan = require("morgan");
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+connectToDatabase();
+
+app.use(cors());
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+app.use(
+  express.json({
+    extended: false,
+  })
+);
+
+app.get("/api", (req, res) => {
+  res.send("API running");
 });
-mongoose.connection.on("connected", () => {
-  console.log("Mongoose Atlas connected !!!");
-});
 
-mongoose.connection.on("error", (error) => {
-  console.log("OOPS !! Problem in connecting Mongoose atlas !!", error);
-});
-
-app.use(express.json());
-app.use(require('./router/auth')) //API's are: 1. localhost:9999/signup (POST){username,email,password}  2. localhost:9999/signin (POST){email,password}
+/**
+ * All apis
+ * There are two types of apis
+    1. Public
+    2. Private
+ * Public are available for not-authenticated user ( no need of requireLogin middleware )
+ * Private are available to only Authenticate user ( need of requireLogin middleware )
+ */
+app.use("/api/auth", require("./router/auth"));
+app.use("/api/profile", require("./router/profile"));
+app.use("/api/story", require("./router/story"));
+app.use("/api/post", require("./router/post"));
 
 app.listen(port, () => {
-  console.log(`App is running on port : ${port} !!`);
+  console.log(`App is running on port : ${port}`);
 });

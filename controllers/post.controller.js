@@ -129,7 +129,7 @@ const postUnlike = (req, res) => {
     if (!err && err !== null) {
       return res.status(422).json({ error: err });
     } else {
-      res.status(200).json({ post: result, message: "post unliked!" });
+      res.status(200).json({ post: result, message: "post unliked" });
     }
   });
 };

@@ -6,6 +6,7 @@ module.exports = async () => {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
     console.log(
       "Connected to Database : " + databaseConnection.connection.host

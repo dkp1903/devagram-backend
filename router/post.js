@@ -14,7 +14,8 @@ const {
   postEdit,
   getAllComments,
   getAllLikes,
-  handleLikes,
+  postLike,
+  postUnlike,
 } = require("../controllers/post.controller");
 
 /**
@@ -77,8 +78,15 @@ router.get("/:id/likes", requireLogin, getAllLikes);
 /**
  * route : PUT /api/post/:id/likes/handleLikes
  * access : Private
- * desc: Add like or delete likes to post`
+ * desc: like post`
  */
-router.put("/:id/likes/handle_likes", requireLogin, handleLikes);
+router.put("/:id/likes/like", requireLogin, postLike);
+
+/**
+ * route : PUT /api/post/:id/likes/handleLikes
+ * access : Private
+ * desc: like post`
+ */
+router.put("/:id/likes/unlike", requireLogin, postUnlike);
 
 module.exports = router;

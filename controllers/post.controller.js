@@ -106,27 +106,32 @@ const getAllLikes = async (req, res) => {
   }
 };
 
-const handleLikes = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id).select("-__v");
-    if (!post) return res.status(404).json("Post not found");
-
-    const likedUser = post.likes.find((like) => like.user == req.user.id);
-    if (likedUser) {
-      // unlike
-      // post.no_of_likes--;
-      post.likes = post.likes.filter((like) => like.user === req.user.id);
-      // post.likes.pop();
+const postLike = (req, res) => {
+  Post.findByIdAndUpdate(
+    req.params.id,
+    { $push: { likes: { user: req.user._id } } },
+    { new: true }
+  ).exec((err, result) => {
+    if (err) {
+      return res.status(422).json({ error: err });
     } else {
-      //like
-      // post.no_of_likes++;
-      post.likes.push({ user: req.user.id });
+      res.status(200).json({ post: result, message: "post liked!" });
     }
-    await post.save();
-    return res.status(200).json({ likes: post });
-  } catch (error) {
-    showError(error, res);
-  }
+  });
+};
+
+const postUnlike = (req, res) => {
+  Post.findByIdAndUpdate(
+    req.params.id,
+    { $pull: { likes: { user: req.user._id } } },
+    { new: true }
+  ).exec((err, result) => {
+    if (!err && err !== null) {
+      return res.status(422).json({ error: err });
+    } else {
+      res.status(200).json({ post: result, message: "post unliked!" });
+    }
+  });
 };
 
 module.exports = {
@@ -137,5 +142,6 @@ module.exports = {
   postEdit,
   getAllComments,
   getAllLikes,
-  handleLikes,
+  postLike,
+  postUnlike,
 };

@@ -37,6 +37,7 @@ app.use("/api/auth", require("./router/auth"));
 app.use("/api/profile", require("./router/profile"));
 app.use("/api/story", require("./router/story"));
 app.use("/api/post", require("./router/post"));
+app.use("/api/user", require("./router/user"));
 
 app.listen(port, () => {
   console.log(`App is running on port : ${port}`);

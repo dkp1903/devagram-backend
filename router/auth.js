@@ -34,7 +34,7 @@ router.post(
 router.post(
   "/signin",
   [
-    check("email", "email is required").isEmail(),
+    check("emailOrUsername", "email or username is required").exists(),
     check("password", "password is required").exists(),
   ],
   signIn

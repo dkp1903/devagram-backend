@@ -28,6 +28,7 @@ const signUp = async (req, res) => {
             : "User with this username already exists",
       });
     }
+    console.log(req.body);
 
     //create new user
     const newUser = new User({
@@ -74,7 +75,10 @@ const signIn = async (req, res) => {
 
   try {
     //check user with email exist or not
-    const user = await User.findOne({ $or : [{ username: emailOrUsername }, { email : emailOrUsername}]});
+    const user = await User.findOne({
+      $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
+    });
+    
     if (!user) {
       return res.status(422).json({
         error: "Invalid credentials",

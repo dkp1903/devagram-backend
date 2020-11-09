@@ -37,13 +37,11 @@ const addPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   const { id } = req.user;
   try {
-    const posts = await Post.find({ user: id })
-      .populate("user", "_id")
-      .sort("createdAt");
+    const posts = await Post.find({ user: id }).sort("createdAt");
 
     return res.status(200).json({ posts });
   } catch (error) {
-    showError(error);
+    showError(error, res);
   }
 };
 
@@ -52,8 +50,8 @@ const getPost = async (req, res) => {
     const post = await Post.findById(req.params.id).populate("user", "_id");
     if (!post) return res.status(404).json("Post not found");
     return res.status(200).json({ post });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    showError(error, res);
   }
 };
 
@@ -64,22 +62,70 @@ const postDelete = async (req, res) => {
       if (!deletedPost) return res.status(404).json("Post not found");
       return res.status(200).json("Post Deleted!");
     } else return res.status(401).json("Post access denied!");
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    showError(error, res);
   }
 };
 
 const postEdit = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findById(id).populate("user", "_id");
+    if (post.user._id == req.user.id) {
+      if (!post) return res.status(404).json("Post not found");
+      if (req.body.content) {
+        post.content = req.body.content;
+        await post.save();
+        return res.status(200).json({ post });
+      }
+    } else return res.status(401).json("Post access denied!");
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
+const getAllComments = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate("user", "_id");
+    if (!post) return res.status(404).json("Post not found");
+
+    return res.status(200).json({ comments: post.comments });
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
+const getAllLikes = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (deletedPost.user.id === req.user.id) {
-      if (!post) return res.status(404).json("Post not found");
-      if (content) post.content = req.body.content;
-    } else return res.status(401).json("Post access denied!");
+    if (!post) return res.status(404).json("Post not found");
 
-    return res.status(200).json("Post Updated");
-  } catch (err) {
-    console.log(err);
+    return res.status(200).json({ likes: post.likes });
+  } catch (error) {
+    showError(error, res);
+  }
+};
+
+const handleLikes = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).select("-__v");
+    if (!post) return res.status(404).json("Post not found");
+
+    const likedUser = post.likes.find((like) => like.user == req.user.id);
+    if (likedUser) {
+      // unlike
+      // post.no_of_likes--;
+      post.likes = post.likes.filter((like) => like.user === req.user.id);
+      // post.likes.pop();
+    } else {
+      //like
+      // post.no_of_likes++;
+      post.likes.push({ user: req.user.id });
+    }
+    await post.save();
+    return res.status(200).json({ likes: post });
+  } catch (error) {
+    showError(error, res);
   }
 };
 
@@ -89,4 +135,7 @@ module.exports = {
   getPost,
   postDelete,
   postEdit,
+  getAllComments,
+  getAllLikes,
+  handleLikes,
 };

@@ -134,6 +134,31 @@ const postUnlike = (req, res) => {
   });
 };
 
+const postComment = (req, res) => {
+  const comment = {
+    text: req.body.text,
+    user: req.user._id,
+  };
+  Post.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: { comments: comment },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("comments.user", "_id name")
+    .populate("user", "_id name")
+    .exec((err, result) => {
+      if (err) {
+        return res.status(422).json({ error: err });
+      } else {
+        res.status(200).json({ post: result, message: "comment added!" });
+      }
+    });
+};
+
 module.exports = {
   addPost,
   getAllPosts,
@@ -144,4 +169,5 @@ module.exports = {
   getAllLikes,
   postLike,
   postUnlike,
+  postComment,
 };

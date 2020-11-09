@@ -49,3 +49,26 @@ const HackathonSchema = new mongoose.Schema({
 });
 
 mongoose.model("Hackathons", HackathonSchema);
+
+    organizers:[
+        {
+            user:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:'User'
+            }
+        }
+    ],
+    start_date:{
+        type:Date,
+        required:true
+    },
+    end_date:{
+        type:Date,
+        required:true
+    },
+    important_links:{
+        type:String
+    }
+})
+
+mongoose.model("Hackathons",HackathonSchema)

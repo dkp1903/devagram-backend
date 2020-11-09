@@ -78,6 +78,7 @@ const signIn = async (req, res) => {
     const user = await User.findOne({
       $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
     });
+    
     if (!user) {
       return res.status(422).json({
         error: "Invalid credentials",

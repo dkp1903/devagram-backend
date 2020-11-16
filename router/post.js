@@ -4,7 +4,6 @@ const { check } = require("express-validator");
 
 //middleware
 const requireLogin = require("../middlewares/requireLogin");
-const checkOriginalUser = require("../middlewares/checkOriginalUser");
 
 //controllers
 const {
@@ -12,6 +11,11 @@ const {
   getAllPosts,
   getPost,
   postDelete,
+  postEdit,
+  getAllComments,
+  getAllLikes,
+  postLike,
+  postUnlike,
 } = require("../controllers/post.controller");
 
 /**
@@ -34,27 +38,55 @@ router.post(
  * access : Public
  * desc: GET posts of all users
  */
-router.get("/", getAllPosts);
+router.get("/", requireLogin, getAllPosts);
 
 /**
- * route : GET /api/post
+ * route : GET /api/post/:id
  * access : Private
  * desc: GET single post
  */
 router.get("/:id", requireLogin, getPost);
 
 /**
- * route : DELETE /api/post
+ * route : DELETE /api/post/:id
  * access : Private
  * desc: DELETE post
  */
 router.delete("/:id", requireLogin, postDelete);
 
 /**
- * route : PUT /api/post
+ * route : PUT /api/post/:id
  * access : Private
- * desc: EDIT post
+ * desc: EDIT post`
  */
-router.put("/:id", requireLogin, postDelete);
+router.put("/:id", requireLogin, postEdit);
+
+/**
+ * route : GET /api/post/:id/comments
+ * access : Private
+ * desc: GET all comments`
+ */
+router.get("/:id/comments", requireLogin, getAllComments);
+
+/**
+ * route : GET /api/post/:id/likes
+ * access : Private
+ * desc: GET all likes`
+ */
+router.get("/:id/likes", requireLogin, getAllLikes);
+
+/**
+ * route : PUT /api/post/:id/likes/handleLikes
+ * access : Private
+ * desc: like post`
+ */
+router.put("/:id/likes/like", requireLogin, postLike);
+
+/**
+ * route : PUT /api/post/:id/likes/handleLikes
+ * access : Private
+ * desc: like post`
+ */
+router.put("/:id/likes/unlike", requireLogin, postUnlike);
 
 module.exports = router;

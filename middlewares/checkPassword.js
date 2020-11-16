@@ -4,8 +4,8 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 
 /**
- * Check weather password is provide
- * if provided then checks is valid or not
+ * Check whether password is provided
+ * if provided then checks if it's valid or not
  */
 module.exports = async (req, res, next) => {
   const errors = validationResult(req);

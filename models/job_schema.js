@@ -26,6 +26,10 @@ const JobSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  companyOrOrganization:{
+        type:String,
+        required:true
+    },
   job_applicants: [
     {
       user: {

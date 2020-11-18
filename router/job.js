@@ -51,4 +51,31 @@ router.post('/createjob',requirelogin, async (req,res)=>{
     }
 })
 
+router.delete('/jobs/:id',requirelogin, async (req,res)=>{
+  const {id} = req.params;
+  try{
+  const findjob = await Job.findById(id)
+      if(!findjob) return res.status(422).json({error:"Job doesn't exist."});
+      const oriuser = findjob.companyOrOrganization;
+      if(toString(req.user._id) === toString(oriuser))
+      {
+          try{
+            const deljob = await Job.findByIdAndDelete(req.params.id)
+            if(!deljob) return res.status(422).json({error:"Job doesn't exist."});
+            return res.json({message:"Job deleted successfully."});
+          }
+          catch(err){
+              console.log(err);
+          }
+      }
+      else{
+           return res.status(401).json({error:"Job access denied."});
+        }
+      }
+  catch(err){
+      console.log(err);
+  }
+})
+
+
 module.exports = router

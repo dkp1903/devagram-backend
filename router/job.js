@@ -77,5 +77,39 @@ router.delete('/jobs/:id',requirelogin, async (req,res)=>{
   }
 })
 
+router.post('/jobs/:id',requirelogin, async (req,res)=>{
+    const {id} = req.params;
+    try{
+        const foundJob = await Job.findById(id);
+        if(!foundJob) return res.status(422).json({error:"Job doesn't exist."})
+        if(toString(foundJob.companyOrOrganization) != toString(req.user._id))
+        {
+            return res.status(401).json({error:"Job access denied"});
+        }
+        const {job_title,job_type,job_description,job_start,location,salary} = req.body;  
+        if(!job_title || !job_type || !job_description || !job_start || !location || !salary)
+        {
+            return res.status(422).json({error:"Please enter all details."});
+        }
+        try{
+        const succ = await Job.findByIdAndUpdate(id,{
+            job_title,
+            job_start,
+            job_type,
+            job_description,
+            location,
+            salary,
+            companyOrOrganization: req.user._id,
+        })
+        return res.json({message:"Job updated successfully."});
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+    catch(err){
+        console.log(err);
+    }
+})
 
 module.exports = router

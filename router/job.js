@@ -17,29 +17,15 @@ router.get('/jobs',requirelogin,(req,res)=>{
     })
 })
 
-router.post('/createjob',(req,res)=>{
-    const {authorization} = req.headers;
-    if (!authorization) {
-        return res.status(401).json({
-          error: "You must be logged in",
-        });
-    }
-    const token = authorization.replace("Bearer ", "");
-    jwt.verify(token, JWT_SECRET, (err, payload) => {
-    if (err) {
-      return res.status(401).json({
-        error: "You must be logged in"
-      });
-    }
-    const {_id} = payload;
+router.post('/createjob',requirelogin, async (req,res)=>{
     const {job_title,job_type,job_description,job_start,location,salary} = req.body;  
     if(!job_title || !job_type || !job_description || !job_start || !location || !salary)
     {
         return res.status(422).json({error:"Please enter all details."});
     }
-    compquery = _id;
-    Job.findOne({compquery,job_title,job_type,location})
-    .then(savedjob=>{
+    compquery = req.user._id;
+    try{
+    const savedjob = await Job.findOne({companyOrOrganization:compquery,job_title,job_type,location})
         if(savedjob){
             return res.status(422).json({error:"Job with same credentials already exists."});
         }
@@ -50,15 +36,19 @@ router.post('/createjob',(req,res)=>{
             job_start,
             location,
             salary,
-            companyOrOrganization:_id,
+            companyOrOrganization:compquery,
         })
-        newJob.save()
-        .then(nj=>{
-            res.json({message:"Job created successfully."});
-        })
-        .catch(err=>{
+        try{
+        await newJob.save()
+        res.json({message:"Job created successfully."});
+        }
+        catch(err){
             console.log(err);
-        })
-    })
-    })
+        }
+    }
+    catch(err){
+        console.log(err);
+    }
 })
+
+module.exports = router

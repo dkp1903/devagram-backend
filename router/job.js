@@ -4,11 +4,11 @@ const mongoose = require('mongoose')
 const Job = mongoose.model("Job")
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET
-const requirelogin = require('../middleware/requireLogin')
+const requirelogin = require('../middlewares/requireLogin')
 
 router.get('/jobs',requirelogin,(req,res)=>{
     Job.find()
-    .populate("jobs","_id role company_name location requirement useful_links")
+    .populate("jobs","job_title job_type job_description job_start location salary")
     .then(all_jobs=>{
         res.json({jobs:all_jobs});
     })

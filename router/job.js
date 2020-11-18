@@ -3,7 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const Job = mongoose.model("Job")
 const jwt = require('jsonwebtoken')
-const {JWT_SECRET} = require("../keys")
+const JWT_SECRET = process.env.JWT_SECRET
 const requirelogin = require('../middleware/requireLogin')
 
 router.get('/jobs',requirelogin,(req,res)=>{

@@ -1,10 +1,11 @@
 const { Router } = require("express");
 const router = Router();
 const { check } = require("express-validator");
+const upload=require('../utils/multer')
 
 //middleware
 const requireLogin = require("../middlewares/requireLogin");
-
+const middleware=[requireLogin,upload.single("image")] //here "image" is the attribute of the file name="image"
 //controllers
 const {
   addPost,
@@ -25,7 +26,7 @@ const {
  */
 router.post(
   "/",
-  requireLogin,
+  middleware,
   [
     check("img", "image is required").isURL(),
     check("content", "content is required").not().isEmpty(),

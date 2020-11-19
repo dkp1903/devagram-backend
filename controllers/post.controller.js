@@ -1,4 +1,5 @@
 const Post = require("../models/post_schema");
+const cloudinary=require('../utils/cloudinary')
 
 const { validationResult } = require("express-validator");
 const showError = require("../config/showError");
@@ -11,13 +12,14 @@ const addPost = async (req, res) => {
     });
   }
 
-  const { content, img } = req.body;
+  const { content} = req.body;
   const { user } = req;
 
   try {
+    const imageResult=await cloudinary.uploader.upload(req.file.path)
     const post = new Post({
       content,
-      img, //this would be the url for image stored in the cloud
+      img:imageResult.url, //this would be the url for image stored in the cloud
       user: user.id,
     });
 

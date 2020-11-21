@@ -6,12 +6,12 @@ const port = process.env.PORT || 9999;
 const connectToDatabase = require("./config/dbConfig");
 
 const cors = require("cors");
-const morgan = require("morgan");
 
 connectToDatabase();
 
 app.use(cors());
 if (process.env.NODE_ENV === "development") {
+  const morgan = require("morgan");
   app.use(morgan("dev"));
 }
 

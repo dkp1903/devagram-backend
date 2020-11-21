@@ -1,10 +1,11 @@
 const { Router } = require("express");
 const router = Router();
 const { check } = require("express-validator");
+const upload=require('../utils/multer')
 
 //middleware
 const requireLogin = require("../middlewares/requireLogin");
-
+const middleware=[requireLogin,upload.single("image")] //here "image" is the attribute of the file name="image"
 //controllers
 const {
   addPost,
@@ -16,6 +17,7 @@ const {
   getAllLikes,
   postLike,
   postUnlike,
+  postComment,
 } = require("../controllers/post.controller");
 
 /**
@@ -25,7 +27,7 @@ const {
  */
 router.post(
   "/",
-  requireLogin,
+  middleware,
   [
     check("img", "image is required").isURL(),
     check("content", "content is required").not().isEmpty(),
@@ -45,7 +47,7 @@ router.get("/", requireLogin, getAllPosts);
  * access : Private
  * desc: GET single post
  */
-router.get("/:id", requireLogin, getPost);
+router.get("/:id", getPost);
 
 /**
  * route : DELETE /api/post/:id
@@ -88,5 +90,12 @@ router.put("/:id/likes/like", requireLogin, postLike);
  * desc: like post`
  */
 router.put("/:id/likes/unlike", requireLogin, postUnlike);
+
+/**
+ * route : PUT /api/post/:id/likes/handleLikes
+ * access : Private
+ * desc: like post`
+ */
+router.put("/:id/comments", requireLogin, postComment);
 
 module.exports = router;

@@ -19,12 +19,14 @@
   "homepage": "https://github.com/dkp1903/devagram-backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.23.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.10"
+    "mongoose": "^5.10.10",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "morgan": "^1.10.0",

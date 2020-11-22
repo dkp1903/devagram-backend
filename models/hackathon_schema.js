@@ -27,14 +27,10 @@ const HackathonSchema = new mongoose.Schema({
       },
     },
   ],
-  organizers: [
-    {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
+  organizers:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
     },
-  ],
   start_date: {
     type: Date,
     required: true,

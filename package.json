@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/dkp1903/devagram-backend.git"
   },
-  "author": "Aakash Thakkar",
+  "author": "team@Devagram",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dkp1903/devagram-backend/issues"
@@ -31,5 +31,8 @@
   "devDependencies": {
     "morgan": "^1.10.0",
     "nodemon": "^2.0.6"
+  },
+  "engines": {
+    "node": "14.5.0"
   }
 }

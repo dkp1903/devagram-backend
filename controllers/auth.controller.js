@@ -28,7 +28,6 @@ const signUp = async (req, res) => {
             : "User with this username already exists",
       });
     }
-    console.log(req.body);
 
     //create new user
     const newUser = new User({
@@ -51,8 +50,6 @@ const signUp = async (req, res) => {
         name,
         username,
         email,
-        description,
-        devrole,
       },
       token,
     });

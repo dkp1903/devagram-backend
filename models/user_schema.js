@@ -19,7 +19,6 @@ const UserSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
   },
   profile_picture: {
     type: String,
@@ -35,7 +34,6 @@ const UserSchema = new mongoose.Schema({
   },
   devrole: {
     type: String,
-    required: true,
   },
   no_of_posts: {
     type: Number,

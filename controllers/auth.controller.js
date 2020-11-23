@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      error: errors.array(),
+      message: errors.array(),
     });
   }
 
@@ -22,7 +22,7 @@ const signUp = async (req, res) => {
     //id user exists return error
     if (user) {
       return res.status(400).json({
-        error:
+        message:
           user.email.toLowerCase() === email.toLowerCase()
             ? "User with this email already exists"
             : "User with this username already exists",
@@ -79,14 +79,14 @@ const signIn = async (req, res) => {
 
     if (!user) {
       return res.status(422).json({
-        error: "Invalid credentials",
+        message: "Invalid credentials",
       });
     }
     //match hash password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(422).json({
-        error: "Invalid credentials",
+        message: "Invalid credentials",
       });
     }
     //generate token
@@ -97,8 +97,6 @@ const signIn = async (req, res) => {
         name: user.name,
         username: user.username,
         email: user.email,
-        description: user.description,
-        devrole: user.devrole,
       },
       token,
     });

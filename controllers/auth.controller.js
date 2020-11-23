@@ -14,7 +14,7 @@ const signUp = async (req, res) => {
     });
   }
 
-  const { name, username, password, email, description, devrole } = req.body;
+  const { name, username, password, email } = req.body;
 
   try {
     const user = await User.findOne({ $or: [{ username }, { email }] });
@@ -36,8 +36,6 @@ const signUp = async (req, res) => {
       username,
       password,
       email,
-      description,
-      devrole,
     });
 
     // encrypt the password
@@ -67,7 +65,7 @@ const signIn = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      error: errors.array(),
+      message: errors.array(),
     });
   }
 
@@ -78,7 +76,7 @@ const signIn = async (req, res) => {
     const user = await User.findOne({
       $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
     });
-    
+
     if (!user) {
       return res.status(422).json({
         error: "Invalid credentials",

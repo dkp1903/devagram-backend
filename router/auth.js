@@ -20,8 +20,6 @@ router.post(
       .isEmpty()
       .isLength({ max: 32, min: 8 }),
     check("email", "email is required").isEmail(),
-    check("description", "description is required").not().isEmpty(),
-    check("devrole", "devrole is required").not().isEmpty(),
   ],
   signUp
 );

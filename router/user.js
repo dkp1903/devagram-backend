@@ -9,7 +9,7 @@ const { getUser } = require("../controllers/user.controller");
  * access : Private
  * desc: Get a user with id
  */
-router.get("/user/:id", getUser);
+router.get("/user/:id", requireLogin, getUser);
 
 // router.put("/follow", requireLogin, (req, res) => {
 //   User.findByIdAndUpdate(

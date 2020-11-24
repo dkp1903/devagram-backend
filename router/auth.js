@@ -3,7 +3,17 @@ const router = Router();
 const { check } = require("express-validator");
 
 //controllers
-const { signIn, signUp } = require("../controllers/auth.controller");
+const { signIn, signUp, authUser } = require("../controllers/auth.controller");
+
+//middlewares
+const requireLogin = require("../middlewares/requireLogin");
+
+/**
+ * route : POST /api/auth
+ * access : Private
+ * desc: get Auth user
+ */
+router.get("/", requireLogin, authUser);
 
 /**
  * route : POST /api/auth/signup

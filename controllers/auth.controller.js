@@ -6,6 +6,13 @@ const { validationResult } = require("express-validator");
 const showError = require("../config/showError");
 const generateToken = require("../config/generateToken");
 
+const authUser = (req, res) => {
+  const user = req.user;
+  return res.status(200).json({
+    user,
+  });
+};
+
 const signUp = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -105,4 +112,5 @@ const signIn = async (req, res) => {
 module.exports = {
   signUp,
   signIn,
+  authUser,
 };

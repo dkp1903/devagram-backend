@@ -145,29 +145,32 @@ const postUnlike = (req, res) => {
   });
 };
 
-const postComment = (req, res) => {
+const postComment = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      message: errors.array(),
+    });
+  }
   const comment = {
     text: req.body.text,
     user: req.user._id,
   };
-  Post.findByIdAndUpdate(
-    req.params.id,
-    {
-      $push: { comments: comment },
-    },
-    {
-      new: true,
-    }
-  )
-    .populate("comments.user", "_id name")
-    .populate("user", "_id name")
-    .exec((err, result) => {
-      if (err) {
-        return res.status(422).json({ error: err });
-      } else {
-        res.status(200).json({ post: result, message: "comment added!" });
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: { comments: comment },
+      },
+      {
+        new: true,
       }
-    });
+    ).exec();
+    res.status(200).json({ post, message: "comment added!" });
+  } catch (error) {
+    console.log(error.message);
+    showError(error, res);
+  }
 };
 
 module.exports = {

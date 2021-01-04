@@ -3,12 +3,7 @@ const showError = require("../utils/showError");
 
 const getHackathons = async (req, res) => {
   try {
-    const hackathons = hack
-      .find()
-      .populate(
-        "hackathons",
-        "title hackathon_poster hackathon_description organizers start_date end_date important_links"
-      );
+    const hackathons = await hack.find();
     res.status(200).json({
       hackathons,
     });
@@ -49,9 +44,9 @@ const createHackathon = async (req, res) => {
   try {
     const savedHackathon = await hack.findOne({
       organizers: req.user.id,
-      title,
       start_date,
       end_date,
+      title,
     });
     if (savedHackathon) {
       return res
@@ -67,7 +62,10 @@ const createHackathon = async (req, res) => {
       organizers: req.user.id,
     });
     await newHackathon.save();
-    res.json({ message: "Hackathon created successfully." });
+    res.json({
+      hackathon: newHackathon,
+      message: "Hackathon created successfully.",
+    });
   } catch (err) {
     console.log(err);
   }
@@ -134,7 +132,7 @@ const updateHackathons = async (req, res) => {
       });
     }
     try {
-      await hack.findByIdAndUpdate(id, {
+      const newHackathon = await hack.findByIdAndUpdate(id, {
         title,
         hackathon_poster,
         hackathon_description,
@@ -142,7 +140,18 @@ const updateHackathons = async (req, res) => {
         end_date,
         organizers: req.user._id,
       });
-      return res.json({ message: "Hackathon details updated successfully." });
+      return res.json({
+        hackathon: {
+          ...newHackathon._doc,
+          title,
+          hackathon_poster,
+          hackathon_description,
+          start_date,
+          end_date,
+          organizers: req.user._id,
+        },
+        message: "Hackathon details updated successfully.",
+      });
     } catch (err) {
       console.log(err);
     }

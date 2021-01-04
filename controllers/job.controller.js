@@ -3,14 +3,10 @@ const showError = require("../utils/showError");
 
 const getJobs = async (_, res) => {
   try {
-    const jobs = await Job.find()
-      .populate(
-        "jobs",
-        "job_title job_type job_description job_start location salary"
-      )
-      .then((all_jobs) => {
-        res.json({ jobs: all_jobs });
-      });
+    const jobs = await Job.find();
+    return res.status(200).json({
+      jobs,
+    });
   } catch (error) {
     console.log(error.message);
     showError(error, res);
@@ -59,7 +55,7 @@ const createJob = async (req, res) => {
     });
     try {
       await newJob.save();
-      res.json({ message: "Job created successfully." });
+      res.json({ job: newJob, message: "Job created successfully." });
     } catch (err) {
       console.log(err);
     }
@@ -118,7 +114,7 @@ const updateJob = async (req, res) => {
       return res.status(422).json({ error: "Please enter all details." });
     }
     try {
-      await Job.findByIdAndUpdate(id, {
+      const job = await Job.findByIdAndUpdate(id, {
         job_title,
         job_start,
         job_type,
@@ -127,7 +123,19 @@ const updateJob = async (req, res) => {
         salary,
         companyOrOrganization: req.user._id,
       });
-      return res.json({ message: "Job updated successfully." });
+      return res.json({
+        job: {
+          ...job._doc,
+          job_title,
+          job_start,
+          job_type,
+          job_description,
+          location,
+          salary,
+          companyOrOrganization: req.user._id,
+        },
+        message: "Job updated successfully.",
+      });
     } catch (err) {
       console.log(err);
     }

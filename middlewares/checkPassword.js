@@ -1,4 +1,4 @@
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 const User = require("../models/user_schema");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
@@ -18,10 +18,15 @@ module.exports = async (req, res, next) => {
   const { password } = req.body;
   try {
     const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(400).json({
+        error: "Invalid credentials",
+      });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
-        error: "Invalid password",
+        error: "Invalid credentials",
       });
     }
     return next();

@@ -1,7 +1,7 @@
 const Story = require("../models/story_schema");
 const User = require("../models/user_schema");
 
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 const { validationResult } = require("express-validator");
 
 const uploadStory = async (req, res) => {

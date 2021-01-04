@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user_schema");
 const { validationResult } = require("express-validator");
 
-const showError = require("../config/showError");
-const generateToken = require("../config/generateToken");
+const showError = require("../utils/showError");
+const generateToken = require("../utils/generateToken");
 
 const authUser = (req, res) => {
   const user = req.user;

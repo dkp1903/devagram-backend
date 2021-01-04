@@ -7,7 +7,11 @@ const connectToDatabase = require("./config/dbConfig");
 
 const cors = require("cors");
 
-connectToDatabase();
+connectToDatabase().then(() => {
+  app.listen(port, () => {
+    console.log(`App is running on port : ${port}`);
+  });
+});
 
 app.use(cors());
 if (process.env.NODE_ENV === "development") {
@@ -20,10 +24,6 @@ app.use(
     extended: false,
   })
 );
-
-app.get("/api", (req, res) => {
-  res.send("API running");
-});
 
 /**
  * All apis
@@ -38,7 +38,11 @@ app.use("/api/profile", require("./router/profile"));
 app.use("/api/story", require("./router/story"));
 app.use("/api/post", require("./router/post"));
 app.use("/api/user", require("./router/user"));
+app.use("/api/hackathons", require("./router/hackathon"));
+app.use("/api/jobs", require("./router/job"));
 
-app.listen(port, () => {
-  console.log(`App is running on port : ${port}`);
+app.use("/", (_, res) => {
+  res.status(200).json({
+    message: "API Running",
+  });
 });

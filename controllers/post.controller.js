@@ -113,13 +113,11 @@ const postLike = async (req, res) => {
     let post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
 
-    const alreadyLiked = await post.likes.find((like) => {
-      console.log(like.user === req.user.id);
-      return like.user.toString() === req.user.id;
-    });
-    console.log(alreadyLiked);
+    const alreadyLiked = await post.likes.find(
+      (like) => like.user.toString() === req.user.id
+    );
     if (alreadyLiked) {
-      return res.status(200).json({ post, message: "already liked!" });
+      return res.status(200).json({ post, message: "already  liked!" });
     }
 
     post = await Post.findByIdAndUpdate(

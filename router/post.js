@@ -94,6 +94,6 @@ router.put("/likes/unLike/:id", requireLogin, postUnlike);
  * access : Private
  * desc: comment post`
  */
-router.put("/:id/comments", requireLogin, postComment);
+router.put("/comments/:id", requireLogin, postComment);
 
 module.exports = router;

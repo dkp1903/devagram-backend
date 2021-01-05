@@ -15,18 +15,14 @@ const {
 //middlewares
 const checkUserExist = require("../middlewares/checkUserExist");
 const requireLogin = require("../middlewares/requireLogin");
+const upload = require("../utils/multer");
 
 /**
  * route : POST /api/story
  * access : Private
- * desc: create user
+ * desc: create story
  */
-router.post(
-  "/",
-  requireLogin,
-  [check("imageUrl", "imageUrl is required").isURL()],
-  uploadStory
-);
+router.post("/", requireLogin, upload.single("image"), uploadStory);
 
 /**
  * route : GET /api/story/me

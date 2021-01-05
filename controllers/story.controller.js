@@ -1,7 +1,7 @@
 const Story = require("../models/story_schema");
-const User = require("../models/user_schema");
+const cloudinary = require("../utils/cloudinary");
 
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 const { validationResult } = require("express-validator");
 
 const uploadStory = async (req, res) => {
@@ -12,11 +12,12 @@ const uploadStory = async (req, res) => {
     });
   }
 
-  const { imageUrl, content } = req.body;
+  const { content } = req.body;
   try {
+    const imageResult = await cloudinary.uploader.upload(req.file.path);
     const story = new Story({
       user: req.user.id,
-      imageUrl,
+      imageUrl: imageResult.url,
     });
     if (content) story.content = content;
     await story.save();

@@ -1,5 +1,5 @@
 const User = require("../models/user_schema");
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 
 module.exports = async (req, res, next) => {
   const { userId } = req.params;

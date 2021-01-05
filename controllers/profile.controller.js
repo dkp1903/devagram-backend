@@ -3,7 +3,7 @@ const User = require("../models/user_schema");
 const Post = require("../models/post_schema");
 const Story = require("../models/story_schema");
 
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 const bcrypt = require("bcryptjs");
 
 const getProfile = async (req, res) => {

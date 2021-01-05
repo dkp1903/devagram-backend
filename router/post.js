@@ -1,11 +1,11 @@
 const { Router } = require("express");
 const router = Router();
 const { check } = require("express-validator");
-const upload=require('../utils/multer')
+const upload = require("../utils/multer");
 
 //middleware
 const requireLogin = require("../middlewares/requireLogin");
-const middleware=[requireLogin,upload.single("image")] //here "image" is the attribute of the file name="image"
+
 //controllers
 const {
   addPost,
@@ -27,11 +27,9 @@ const {
  */
 router.post(
   "/",
-  middleware,
-  [
-    check("img", "image is required").isURL(),
-    check("content", "content is required").not().isEmpty(),
-  ],
+  requireLogin,
+  upload.single("image"),
+  [check("content", "content is required").not().isEmpty()],
   addPost
 );
 
@@ -64,38 +62,43 @@ router.delete("/:id", requireLogin, postDelete);
 router.put("/:id", requireLogin, postEdit);
 
 /**
- * route : GET /api/post/:id/comments
+ * route : GET /api/post/comments/:id
  * access : Private
  * desc: GET all comments`
  */
-router.get("/:id/comments", requireLogin, getAllComments);
+router.get("/comments/:id", requireLogin, getAllComments);
 
 /**
- * route : GET /api/post/:id/likes
+ * route : GET /api/post/likes/:id
  * access : Private
  * desc: GET all likes`
  */
-router.get("/:id/likes", requireLogin, getAllLikes);
+router.get("/likes/:id", requireLogin, getAllLikes);
 
 /**
- * route : PUT /api/post/:id/likes/handleLikes
+ * route : PUT /api/post/:id/likes/like
  * access : Private
  * desc: like post`
  */
-router.put("/:id/likes/like", requireLogin, postLike);
+router.put("/likes/like/:id", requireLogin, postLike);
 
 /**
- * route : PUT /api/post/:id/likes/handleLikes
+ * route : PUT /api/post/:id/likes/unLike
  * access : Private
  * desc: like post`
  */
-router.put("/:id/likes/unlike", requireLogin, postUnlike);
+router.put("/likes/unLike/:id", requireLogin, postUnlike);
 
 /**
- * route : PUT /api/post/:id/likes/handleLikes
+ * route : PUT /api/post/:id/comments
  * access : Private
- * desc: like post`
+ * desc: comment post`
  */
-router.put("/:id/comments", requireLogin, postComment);
+router.put(
+  "/comments/:id",
+  [check("text", "text in comment is required").not().isEmpty()],
+  requireLogin,
+  postComment
+);
 
 module.exports = router;

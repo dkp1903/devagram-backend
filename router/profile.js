@@ -14,9 +14,11 @@ const {
 const requireLogin = require("../middlewares/requireLogin");
 const checkPassword = require("../middlewares/checkPassword");
 
-//error handler
-const showError = require("../config/showError");
-
+/**
+ * route : GET /api/profile
+ * access : private
+ * desc: get user profile
+ */
 router.get("/", requireLogin, getProfile);
 
 /**

@@ -1,8 +1,8 @@
 const Post = require("../models/post_schema");
-const cloudinary=require('../utils/cloudinary')
+const cloudinary = require("../utils/cloudinary");
 
 const { validationResult } = require("express-validator");
-const showError = require("../config/showError");
+const showError = require("../utils/showError");
 
 const addPost = async (req, res) => {
   const errors = validationResult(req);
@@ -12,14 +12,14 @@ const addPost = async (req, res) => {
     });
   }
 
-  const { content} = req.body;
+  const { content } = req.body;
   const { user } = req;
 
   try {
-    const imageResult=await cloudinary.uploader.upload(req.file.path)
+    const imageResult = await cloudinary.uploader.upload(req.file.path);
     const post = new Post({
       content,
-      img:imageResult.url, //this would be the url for image stored in the cloud
+      img: imageResult.url, //this would be the url for image stored in the cloud
       user: user.id,
     });
 
@@ -49,7 +49,7 @@ const getAllPosts = async (req, res) => {
 
 const getPost = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate("user", "_id");
+    const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
     return res.status(200).json({ post });
   } catch (error) {
@@ -108,18 +108,27 @@ const getAllLikes = async (req, res) => {
   }
 };
 
-const postLike = (req, res) => {
-  Post.findByIdAndUpdate(
-    req.params.id,
-    { $push: { likes: { user: req.user._id } } },
-    { new: true }
-  ).exec((err, result) => {
-    if (err) {
-      return res.status(422).json({ error: err });
-    } else {
-      res.status(200).json({ post: result, message: "post liked!" });
+const postLike = async (req, res) => {
+  try {
+    let post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
+
+    const alreadyLiked = await post.likes.find(
+      (like) => like.user.toString() === req.user.id
+    );
+    if (alreadyLiked) {
+      return res.status(200).json({ post, message: "already  liked!" });
     }
-  });
+
+    post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $push: { likes: { user: req.user._id } } },
+      { new: true }
+    ).exec();
+    return res.status(200).json({ post, message: "post liked!" });
+  } catch (error) {
+    showError(error, res);
+  }
 };
 
 const postUnlike = (req, res) => {
@@ -131,34 +140,37 @@ const postUnlike = (req, res) => {
     if (!err && err !== null) {
       return res.status(422).json({ error: err });
     } else {
-      res.status(200).json({ post: result, message: "post unliked" });
+      res.status(200).json({ post: result, message: "post unLiked" });
     }
   });
 };
 
-const postComment = (req, res) => {
+const postComment = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      message: errors.array(),
+    });
+  }
   const comment = {
     text: req.body.text,
     user: req.user._id,
   };
-  Post.findByIdAndUpdate(
-    req.params.id,
-    {
-      $push: { comments: comment },
-    },
-    {
-      new: true,
-    }
-  )
-    .populate("comments.user", "_id name")
-    .populate("user", "_id name")
-    .exec((err, result) => {
-      if (err) {
-        return res.status(422).json({ error: err });
-      } else {
-        res.status(200).json({ post: result, message: "comment added!" });
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: { comments: comment },
+      },
+      {
+        new: true,
       }
-    });
+    ).exec();
+    res.status(200).json({ post, message: "comment added!" });
+  } catch (error) {
+    console.log(error.message);
+    showError(error, res);
+  }
 };
 
 module.exports = {
